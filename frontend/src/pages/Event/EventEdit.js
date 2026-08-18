@@ -21,6 +21,7 @@ function EventEdit() {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // FIX UI/UX: State untuk mencegah double submit saat update
 
   // get id from parameter
   const { id } = useParams();
@@ -45,6 +46,7 @@ function EventEdit() {
   // create Event update function
   const updEvent = async (e) => {
     e.preventDefault(); // Prevent default form submission
+    setIsSubmitting(true); // Mulai proses loading
 
     const cleanedData = {
       ...eventData,
@@ -91,6 +93,7 @@ function EventEdit() {
       navigate(`/events`);
     } catch (error) {
       console.log(error); // display error message
+      setIsSubmitting(false); // Matikan loading jika error
     }
   };
 
@@ -105,10 +108,10 @@ function EventEdit() {
         );
 
         // input all the datas into useState
-        setEventData({
-          ...eventData,
+        setEventData((prevData) => ({
+          ...prevData,
           ...res.data, // Merge with existing default state to ensure img2 exists
-        });
+        }));
       } catch (error) {
         console.log(error); // display error message
       }
@@ -118,12 +121,11 @@ function EventEdit() {
   }, [id]);
 
   const handleChange = (event) => {
-    if (event.target.value !== "") {
-      setEventData({
-        ...eventData,
-        [event.target.name]: event.target.value,
-      });
-    }
+    // FIX: Menghapus blokir string kosong agar user bisa menghapus teks typo di form edit
+    setEventData({
+      ...eventData,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const handleFile = (event) => {
@@ -333,11 +335,15 @@ function EventEdit() {
             </div>
             <div className="section">
               <div className="controls">
-                <button type="button" onClick={delEvent} className="btn">
+                <button
+                  type="button"
+                  onClick={delEvent}
+                  className="btn"
+                  disabled={isSubmitting}>
                   Delete
                 </button>
-                <button type="submit" className="btn">
-                  Update
+                <button type="submit" className="btn" disabled={isSubmitting}>
+                  {isSubmitting ? "Updating..." : "Update"}
                 </button>
               </div>
             </div>

@@ -8,6 +8,7 @@ function EventAdd() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
   const [eventData, setEventData] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false); // FIX UI/UX: State untuk mencegah double submit
 
   const handleReset = () => {
     setEventData({
@@ -34,12 +35,11 @@ function EventAdd() {
   const navigate = useNavigate();
 
   const handleChange = (event) => {
-    if (event.target.value !== "") {
-      setEventData({
-        ...eventData,
-        [event.target.name]: event.target.value,
-      });
-    }
+    // FIX: Menghapus if (event.target.value !== "") agar Admin tetap bisa menghapus/mengosongkan teks di form
+    setEventData({
+      ...eventData,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const handleFile = (event) => {
@@ -47,11 +47,13 @@ function EventAdd() {
     // Access the filename from the selected file
     const fileDir = "https://compasspubindonesia.com/media/api/events/img/";
     const file = event.target.files[0];
-    const filename = fileDir + file.name;
-    setEventData({
-      ...eventData,
-      img: filename,
-    });
+    if (file) {
+      const filename = fileDir + file.name;
+      setEventData({
+        ...eventData,
+        img: filename,
+      });
+    }
   };
 
   const handleFile2 = (event) => {
@@ -70,6 +72,7 @@ function EventAdd() {
 
   const AddEvent = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Mulai proses loading
 
     const cleanedData = {
       ...eventData,
@@ -114,6 +117,7 @@ function EventAdd() {
       navigate(`/events`);
     } catch (error) {
       window.alert(error.message); // Display error messages
+      setIsSubmitting(false); // Matikan loading jika error
     }
   };
 
@@ -286,11 +290,15 @@ function EventAdd() {
             </div>
             <div className="section">
               <div className="controls">
-                <button type="button" className="btn" onClick={handleReset}>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={handleReset}
+                  disabled={isSubmitting}>
                   Reset
                 </button>
-                <button type="submit" className="btn">
-                  Create
+                <button type="submit" className="btn" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create"}
                 </button>
               </div>
             </div>
