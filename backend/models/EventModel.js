@@ -26,7 +26,7 @@ const evtSchema = mongoose.Schema(
       type: String,
     },
     img2: {
-      type: String, // Ditambahkan untuk menyimpan URL gambar/poster ke-2
+      type: String, // Ditambahkan untuk menyimpan URL gambar/poster ke-2 sesuai perintah
     },
     start: {
       type: String,

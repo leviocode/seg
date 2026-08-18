@@ -46,10 +46,13 @@ const prtSchema = mongoose.Schema(
     school: {
       type: String,
     },
+    productOption: {
+      type: String, // Ditambahkan agar backend MongoDB menyimpan data opsi produk (300rb/100rb) dari pendaftar
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // export the schema
