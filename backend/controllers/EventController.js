@@ -21,7 +21,13 @@ export const setEvent = asyncHandler(async (req, res) => {
 // get all evts
 export const getEvent = asyncHandler(async (req, res) => {
   try {
-    const evt = await Event.find().sort({ createdAt: -1, updatedAt: -1, name: -1, model: -1, start: -1 });
+    const evt = await Event.find().sort({
+      createdAt: -1,
+      updatedAt: -1,
+      name: -1,
+      model: -1,
+      start: -1,
+    });
     if (!evt) {
       res.status(404);
       throw new Error(`cannot find any Event`);
@@ -36,9 +42,7 @@ export const getEvent = asyncHandler(async (req, res) => {
 // get a Event by id
 export const getEventById = asyncHandler(async (req, res) => {
   try {
-    const evt = await Event.findById(req.params.id).sort({
-      createdAt: -1, updatedAt: -1, name: -1, model: -1, start: -1
-    });
+    const evt = await Event.findById(req.params.id); // FIX: Removed .sort() as findById returns a single document
     if (!evt) {
       res.status(404);
       throw new Error(`cannot find any Event id`);
@@ -87,9 +91,9 @@ export const getEventByKey = asyncHandler(async (req, res) => {
 export const updEvent = asyncHandler(async (req, res) => {
   try {
     const evt = await Event.findByIdAndUpdate(
-      { _id: req.params.id },
+      req.params.id, // FIX: Passed ID string directly instead of an object to prevent CastError
       req.body,
-      { new: true } // exclude file field
+      { new: true }, // exclude file field
     );
     if (!evt) {
       res.status(404);
@@ -105,7 +109,7 @@ export const updEvent = asyncHandler(async (req, res) => {
 // delete a Event
 export const delEvent = asyncHandler(async (req, res) => {
   try {
-    const evt = await Event.findByIdAndDelete({ _id: req.params.id });
+    const evt = await Event.findByIdAndDelete(req.params.id); // FIX: Passed ID string directly instead of an object to prevent CastError
     if (!evt) {
       res.status(404);
       throw new Error(`cannot find any Event id`);

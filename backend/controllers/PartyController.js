@@ -38,9 +38,7 @@ export const getParty = asyncHandler(async (req, res) => {
 // get a Party by id
 export const getPartyById = asyncHandler(async (req, res) => {
   try {
-    const prt = await Party.findById(req.params.id).sort({
-      createdAt: -1,
-    });
+    const prt = await Party.findById(req.params.id); // FIX: Removed .sort() as findById returns a single document
     if (!prt) {
       res.status(404);
       throw new Error(`cannot find any Party id`);
@@ -145,9 +143,9 @@ export const getPartyByKey = asyncHandler(async (req, res) => {
 export const updParty = asyncHandler(async (req, res) => {
   try {
     const prt = await Party.findByIdAndUpdate(
-      { _id: req.params.id },
+      req.params.id, // FIX: Mongoose expects an ID string here, not an object.
       req.body,
-      { new: true } // exclude file field
+      { new: true }, // exclude file field
     );
     if (!prt) {
       res.status(404);
@@ -163,7 +161,7 @@ export const updParty = asyncHandler(async (req, res) => {
 // delete a Party
 export const delParty = asyncHandler(async (req, res) => {
   try {
-    const prt = await Party.findByIdAndDelete({ _id: req.params.id });
+    const prt = await Party.findByIdAndDelete(req.params.id); // FIX: Mongoose expects an ID string here, not an object.
     if (!prt) {
       res.status(404);
       throw new Error(`cannot find any Party id`);
