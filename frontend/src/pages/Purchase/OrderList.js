@@ -304,7 +304,7 @@ const OrderList = () => {
                       <button
                         className="btn"
                         onClick={() =>
-                          (window.location.href = `https://github.com/compass-id/docs/raw/main/Order/${order.serie}.xlsx`)
+                          (window.location.href = `https://compasspubindonesia.com/docs/Order/${order.serie}.xlsx`)
                         }
                         download>
                         GET XLSX
