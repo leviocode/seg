@@ -19,19 +19,6 @@
   padding: 2px 10px;
 }
 
-.lang button {
-  width: auto;
-  height: auto;
-  display: inline-block;
-  overflow: hidden;
-  background: #eee;
-  color: #111;
-  margin: auto;
-  margin-left: 8px;
-  border-radius: 5px;
-  padding: 2px 10px;
-}
-
 .lang button.active {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
@@ -1127,7 +1114,24 @@ body {
     color: #222;
   }
 
-  ::-webkit-scrollbar {
+  /* Perbaikan UX: Scrollbar dimunculkan untuk frame tabel agar user di HP tahu bahwa tabel bisa digeser */
+  .frame::-webkit-scrollbar,
+  .card table::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .frame::-webkit-scrollbar-track,
+  .card table::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .frame::-webkit-scrollbar-thumb,
+  .card table::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+
+  /* Hilangkan scrollbar HANYA untuk Navbar Tabs agar desain UI menu tetap rapi */
+  .navbar .tabs::-webkit-scrollbar {
     display: none;
   }
 
