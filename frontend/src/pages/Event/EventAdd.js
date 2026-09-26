@@ -43,11 +43,12 @@ function EventAdd() {
   };
 
   const handleFile = (event) => {
-    setSelectedFile(event.target.files[0]);
-    // Access the filename from the selected file
-    const fileDir = "https://compasspubindonesia.com/media/api/events/img/";
-    const file = event.target.files[0];
-    if (file) {
+    // Perbaikan: Tambahkan pengecekan if agar tidak crash jika user klik cancel saat pilih file
+    if (event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+      // Access the filename from the selected file
+      const fileDir = "https://compasspubindonesia.com/media/api/events/img/";
+      const file = event.target.files[0];
       const filename = fileDir + file.name;
       setEventData({
         ...eventData,

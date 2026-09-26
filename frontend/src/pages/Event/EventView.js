@@ -53,6 +53,7 @@ const EventView = () => {
         setIsLoading(false);
       } catch (error) {
         window.alert(error.message); // display error message
+        setIsLoading(false); // Perbaikan: stop loading pada error
       }
     };
 
@@ -60,32 +61,34 @@ const EventView = () => {
   }, [id]); // dependency array with only `getParty`
 
   function formatTime(dateString) {
+    if (!dateString) return "-"; // Perbaikan: null checker untuk tanggal
+
     // Create a new Date object from the provided dateString
     const date = new Date(dateString);
 
-    // Define arrays for day names and month names
+    // FIX: Sinkronisasi bahasa penamaan hari dan bulan ke bahasa Indonesia
     const daysOfWeek = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      "Minggu",
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
     ];
     const months = [
-      "January",
-      "February",
-      "March",
+      "Januari",
+      "Februari",
+      "Maret",
       "April",
-      "May",
-      "June",
-      "July",
-      "August",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
       "September",
-      "October",
+      "Oktober",
       "November",
-      "December",
+      "Desember",
     ];
 
     // Get the day of the week, month, day, and year from the Date object

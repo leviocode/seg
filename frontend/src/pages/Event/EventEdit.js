@@ -31,7 +31,7 @@ function EventEdit() {
 
   // create Event deleter function
   const delEvent = async () => {
-    if (window.confirm("Delete this?") === true) {
+    if (window.confirm("Delete this?")) {
       try {
         await axios.delete(`https://seg-server.vercel.app/api/events/id/${id}`); // modify URL based on backend
         // navigate to main page
@@ -39,7 +39,6 @@ function EventEdit() {
       } catch (error) {
         window.alert(error.message); // display error message
       }
-    } else {
     }
   };
 
@@ -92,7 +91,7 @@ function EventEdit() {
       // Navigate to main page
       navigate(`/events`);
     } catch (error) {
-      console.log(error); // display error message
+      window.alert(error.message); // Perbaikan: Tampilkan error agar Admin tahu jika gagal
       setIsSubmitting(false); // Matikan loading jika error
     }
   };
@@ -113,7 +112,7 @@ function EventEdit() {
           ...res.data, // Merge with existing default state to ensure img2 exists
         }));
       } catch (error) {
-        console.log(error); // display error message
+        window.alert(error.message); // Perbaikan: Tampilkan pop-up error jika API gagal ditarik
       }
     };
 
@@ -291,7 +290,7 @@ function EventEdit() {
               />
               {eventData.img && (
                 <p style={{ fontSize: "12px", marginTop: "5px" }}>
-                  Current: {eventData.img.split("/").pop()}
+                  Current: {eventData.img?.split("/").pop()}
                 </p>
               )}
             </div>
@@ -307,7 +306,7 @@ function EventEdit() {
               />
               {eventData.img2 && (
                 <p style={{ fontSize: "12px", marginTop: "5px" }}>
-                  Current: {eventData.img2.split("/").pop()}
+                  Current: {eventData.img2?.split("/").pop()}
                 </p>
               )}
             </div>

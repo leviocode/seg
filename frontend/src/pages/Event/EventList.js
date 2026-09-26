@@ -11,14 +11,14 @@ const EventList = () => {
   const [isLoading, setIsLoading] = useState(true); // state for loading
   const [isEmpty, setIsEmpty] = useState(false);
 
-  const str = searchs;
+  const str = searchs || ""; // Perbaikan: default empty string pencegah crash
 
   // Split the string into words
   const words = str.split(" ");
 
   // Capitalize the first letter of each word
-  const capitalizedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  const capitalizedWords = words.map((word) =>
+    word ? word.charAt(0).toUpperCase() + word.slice(1) : "",
   );
 
   // Join the capitalized words back into a string
@@ -64,6 +64,7 @@ const EventList = () => {
         }
       } catch (error) {
         window.alert(error.message); // display error message
+        setIsLoading(false); // Perbaikan: hentikan loading jika terjadi error API
       }
     };
 
@@ -71,32 +72,34 @@ const EventList = () => {
   }, [search]); // dependency array with only `getEvents`
 
   function formatTime(dateString) {
+    if (!dateString) return "-";
+
     // Create a new Date object from the provided dateString
     const date = new Date(dateString);
 
-    // Define arrays for day names and month names
+    // FIX: Menggunakan array penamaan hari dan bulan Bahasa Indonesia
     const daysOfWeek = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      "Minggu",
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
     ];
     const months = [
-      "January",
-      "February",
-      "March",
+      "Januari",
+      "Februari",
+      "Maret",
       "April",
-      "May",
-      "June",
-      "July",
-      "August",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
       "September",
-      "October",
+      "Oktober",
       "November",
-      "December",
+      "Desember",
     ];
 
     // Get the day of the week, month, day, and year from the Date object

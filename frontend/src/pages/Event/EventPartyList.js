@@ -12,14 +12,14 @@ function EventPartyList() {
 
   const { id } = useParams();
 
-  const str = searchs;
+  const str = searchs || "";
 
   // Split the string into words
   const words = str.split(" ");
 
   // Capitalize the first letter of each word
-  const capitalizedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1),
+  const capitalizedWords = words.map((word) =>
+    word ? word.charAt(0).toUpperCase() + word.slice(1) : "",
   );
 
   // Join the capitalized words back into a string
@@ -29,7 +29,6 @@ function EventPartyList() {
   const navigate = useNavigate();
 
   // setting up useEffect to do tasks in real-time
-
   useEffect(() => {
     // create party loader callback function
     const getParty = async () => {
@@ -49,13 +48,16 @@ function EventPartyList() {
         }
       } catch (error) {
         window.alert(error.message); // display error message
+        setIsLoading(false);
       }
-    }; // dependency array with only `search`
+    };
 
     getParty();
-  }, [id, search]); // dependency array with only `getParty`
+  }, [id, search]);
 
   const formatDate = (val) => {
+    if (!val) return "-";
+
     const date = new Date(val);
 
     const d = String(date.getDate()).padStart(2, "0");
@@ -70,55 +72,64 @@ function EventPartyList() {
   };
 
   const formatPhone = (val) => {
+    if (!val) return "-";
+
     // Replace '+62' at the start of the string with '0'
-    let cleanedPhone = val.replace(/^(\+62|62|0|\+9)/, "0");
+    let cleanedPhone = String(val).replace(/^(\+62|62|0|\+9)/, "0");
 
     // Remove any symbols like '-', '+', '/', '\', '#', '$', '!', etc.
     cleanedPhone = cleanedPhone.replace(/[-+\\#$!]/g, "");
-
     cleanedPhone = cleanedPhone.replace(/\s+/g, "");
 
     return cleanedPhone;
   };
 
   const formatWhatsApp = (val) => {
+    if (!val) return "";
+
     // Replace '+62' at the start of the string with '0'
-    let pH = val.replace(/^(\+62|62|0|\+9)/, "62");
+    let pH = String(val).replace(/^(\+62|62|0|\+9)/, "62");
 
     // Remove any symbols like '-', '+', '/', '\', '#', '$', '!', etc.
     pH = pH.replace(/[-+\\#$!]/g, "");
-
     pH = pH.replace(/\s+/g, "");
 
     return pH;
   };
 
+  // Fungsi untuk trigger download Excel
+  const handleDownloadExcel = () => {
+    // Arahkan ke file PHP yang memproses export (akan kita buat selanjutnya)
+    const excelUrl = `https://compasspubindonesia.com/media/api/events/export_excel.php?id=${id}`;
+    window.open(excelUrl, "_blank");
+  };
+
   // FIX: Menggunakan boolean map variables agar pengecekan tabel lebih ringan, efisien, dan tidak menyebabkan kolom hilang massal.
-  const showName = parties.some((party) => party.name && party.name !== "");
+  const showName = parties.some((party) => party?.name && party.name !== "");
   const showParent = parties.some(
-    (party) => party.parentName && party.parentName !== "",
+    (party) => party?.parentName && party.parentName !== "",
   );
   const showChild = parties.some(
-    (party) => party.childName && party.childName !== "",
+    (party) => party?.childName && party.childName !== "",
   );
   const showCompany = parties.some(
-    (party) => party.company && party.company !== "",
+    (party) => party?.company && party.company !== "",
   );
   const showSchool = parties.some(
-    (party) => party.school && party.school !== "",
+    (party) => party?.school && party.school !== "",
   );
-  const showJob = parties.some((party) => party.job && party.job !== "");
-  const showRoom = parties.some((party) => party.room && party.room !== "");
+  const showJob = parties.some((party) => party?.job && party.job !== "");
+  const showRoom = parties.some((party) => party?.room && party.room !== "");
   const showReferral = parties.some(
-    (party) => party.referral && party.referral !== "",
+    (party) => party?.referral && party.referral !== "",
   );
   const showProductOption = parties.some(
-    (party) => party.productOption && party.productOption !== "",
-  ); // TAMBAHAN INSTRUKSI ATASAN
-  const showMethod = parties.some(
-    (party) => party.method && party.method !== "",
+    (party) => party?.productOption && party.productOption !== "",
   );
-  const showFile = parties.some((party) => party.file && party.file !== "");
+  const showMethod = parties.some(
+    (party) => party?.method && party.method !== "",
+  );
+  const showFile = parties.some((party) => party?.file && party.file !== "");
 
   // render the display
   return (
@@ -128,6 +139,19 @@ function EventPartyList() {
         <button onClick={() => navigate(`/event-view/${id}`)} className="btn">
           See Event
         </button>
+        {/* Tombol Download Excel Ditambahkan di Sini */}
+        <button
+          onClick={handleDownloadExcel}
+          className="btn"
+          style={{
+            marginLeft: "5px",
+            background: "#1E7145",
+            color: "#fff",
+            borderColor: "#1E7145",
+          }}>
+          Download Excel
+        </button>
+
         <div className="section">
           <input
             type="text"
@@ -159,7 +183,6 @@ function EventPartyList() {
                   {showJob && <th>Occupation</th>}
                   {showRoom && <th>Attendance</th>}
 
-                  {/* Kolom Opsi Produk Baru Sesuai Perintah Mrs. Femi */}
                   {showProductOption && <th>Product Option</th>}
 
                   {showReferral && <th>Referral</th>}
@@ -204,14 +227,14 @@ function EventPartyList() {
                     </td>
                     <td>
                       <a
-                        href={`mailto:${party.email.toLowerCase()}`}
+                        href={`mailto:${party.email?.toLowerCase() || ""}`}
                         target="_blank"
                         rel="noreferrer"
                         style={{ textTransform: "lowercase" }}>
-                        {party.email}
+                        {party.email || "-"}
                       </a>
                     </td>
-                    <td>{party.address.toUpperCase()}</td>
+                    <td>{party.address?.toUpperCase() || "-"}</td>
                     {showMethod && <td>{party.method || "-"}</td>}
                     {showFile && (
                       <td>

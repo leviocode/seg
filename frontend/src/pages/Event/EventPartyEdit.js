@@ -8,11 +8,13 @@ function EventPartyEdit() {
   const { id } = useParams();
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // FIX UI/UX: State mencegah double submit
 
   const [eventData, setEventData] = useState({});
 
   const handleFile = (event) => {
-    if (event.target.files[0] !== null) {
+    // Perbaikan: Pengecekan file undefined jika user klik cancel di dialog file
+    if (event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
       // Access the filename from the selected file
       const fileDir = "https://compasspubindonesia.com/media/api/events/img/";
@@ -38,50 +40,58 @@ function EventPartyEdit() {
 
   const AddEvent = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Mulai proses loading
 
     const cleanedData = {
       ...eventData,
     };
 
     const formData = new FormData();
-    formData.append("img", selectedFile);
+    if (selectedFile) {
+      formData.append("img", selectedFile);
+    }
 
     try {
       // Add the Event into database with axios
       await axios.patch(
         `https://seg-server.vercel.app/api/parties/id/${id}`,
-        cleanedData
+        cleanedData,
       );
-      await axios.post(
-        `https://compasspubindonesia.com/media/api/bills/index.php`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
+
+      if (selectedFile) {
+        await axios.post(
+          `https://compasspubindonesia.com/media/api/bills/index.php`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           },
-        }
-      );
+        );
+      }
 
       // Navigate to main page
       navigate(`/event-join-list/` + eventData.event);
     } catch (error) {
       window.alert(error.message); // Display error messages
+      setIsSubmitting(false); // Matikan loading jika error
     }
   };
 
   // create Event deleter function
   const delEvent = async () => {
-    if (window.confirm("Delete this?") === true) {
+    if (window.confirm("Delete this?")) {
+      setIsSubmitting(true); // Mulai proses loading hapus
       try {
         await axios.delete(
-          `https://seg-server.vercel.app/api/parties/id/${id}`
+          `https://seg-server.vercel.app/api/parties/id/${id}`,
         ); // modify URL based on backend
         // navigate to main page
         navigate(`/event-join-list/` + eventData.event);
       } catch (error) {
         window.alert(error.message); // display error message
+        setIsSubmitting(false);
       }
-    } else {
     }
   };
 
@@ -119,7 +129,7 @@ function EventPartyEdit() {
                 className="input"
                 id="name"
                 name="name"
-                value={eventData.name}
+                value={eventData.name || ""}
                 onChange={handleChange}
                 placeholder="Name"
                 required
@@ -132,7 +142,7 @@ function EventPartyEdit() {
                 className="input"
                 id="parentName"
                 name="parentName"
-                value={eventData.name}
+                value={eventData.parentName || ""} // PERBAIKAN: Sebelumnya value={eventData.name} yang mana salah sambung
                 onChange={handleChange}
                 placeholder="Parent Name"
                 required
@@ -145,7 +155,7 @@ function EventPartyEdit() {
                 className="input"
                 id="childName"
                 name="childName"
-                value={eventData.childName}
+                value={eventData.childName || ""}
                 onChange={handleChange}
                 placeholder="Child Name"
                 required
@@ -156,7 +166,7 @@ function EventPartyEdit() {
               <select
                 id="job"
                 name="job"
-                value={eventData.job}
+                value={eventData.job || ""}
                 onChange={handleChange}>
                 <option value="">--- Select Occupation ---</option>
                 <option value="Headmaster">Headmaster</option>
@@ -173,7 +183,7 @@ function EventPartyEdit() {
                 className="input"
                 id="company"
                 name="company"
-                value={eventData.company}
+                value={eventData.company || ""}
                 onChange={handleChange}
                 placeholder="Company/Agency"
               />
@@ -185,7 +195,7 @@ function EventPartyEdit() {
                 className="input"
                 id="school"
                 name="school"
-                value={eventData.school}
+                value={eventData.school || ""}
                 onChange={handleChange}
                 placeholder="Company/Agency"
               />
@@ -197,7 +207,7 @@ function EventPartyEdit() {
                 className="input"
                 id="email"
                 name="email"
-                value={eventData.email}
+                value={eventData.email || ""}
                 onChange={handleChange}
                 placeholder="Email"
                 required
@@ -210,7 +220,7 @@ function EventPartyEdit() {
                 className="input"
                 id="phone"
                 name="phone"
-                value={eventData.phone}
+                value={eventData.phone || ""}
                 onChange={handleChange}
                 placeholder="Phone"
                 required
@@ -221,7 +231,7 @@ function EventPartyEdit() {
               <select
                 id="room"
                 name="room"
-                value={eventData.room}
+                value={eventData.room || ""}
                 onChange={handleChange}>
                 <option value="">
                   --- Select Attendance | Pilih Kehadiran ---
@@ -237,7 +247,7 @@ function EventPartyEdit() {
                 className="input"
                 id="address"
                 name="address"
-                value={eventData.address}
+                value={eventData.address || ""}
                 onChange={handleChange}
                 placeholder="City"
                 required
@@ -250,7 +260,7 @@ function EventPartyEdit() {
                 className="input"
                 id="referral"
                 name="referral"
-                value={eventData.referral}
+                value={eventData.referral || ""}
                 onChange={handleChange}
                 placeholder="Referral"
                 required
@@ -265,16 +275,24 @@ function EventPartyEdit() {
                 name="img"
                 onChange={handleFile}
                 placeholder="Event Image"
-                value={eventData.img}
               />
+              {eventData.img && (
+                <p style={{ fontSize: "12px", marginTop: "5px" }}>
+                  Current: {eventData.img.split("/").pop()}
+                </p>
+              )}
             </div>
             <div className="section">
               <div className="controls">
-                <button type="button" onClick={delEvent} className="btn">
+                <button
+                  type="button"
+                  onClick={delEvent}
+                  className="btn"
+                  disabled={isSubmitting}>
                   Delete
                 </button>
-                <button type="submit" className="btn">
-                  Update
+                <button type="submit" className="btn" disabled={isSubmitting}>
+                  {isSubmitting ? "Updating..." : "Update"}
                 </button>
               </div>
             </div>
