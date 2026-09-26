@@ -131,7 +131,6 @@ function EventPartyEdit() {
                 value={eventData.name || ""}
                 onChange={handleChange}
                 placeholder="Name"
-                required
               />
             </div>
             <div className="field">
@@ -144,7 +143,6 @@ function EventPartyEdit() {
                 value={eventData.parentName || ""}
                 onChange={handleChange}
                 placeholder="Parent Name"
-                required
               />
             </div>
             <div className="field">
@@ -157,7 +155,6 @@ function EventPartyEdit() {
                 value={eventData.childName || ""}
                 onChange={handleChange}
                 placeholder="Child Name"
-                required
               />
             </div>
 
@@ -226,7 +223,6 @@ function EventPartyEdit() {
                 value={eventData.email || ""}
                 onChange={handleChange}
                 placeholder="Email"
-                required
               />
             </div>
             <div className="field">
@@ -239,7 +235,6 @@ function EventPartyEdit() {
                 value={eventData.phone || ""}
                 onChange={handleChange}
                 placeholder="Phone"
-                required
               />
             </div>
             <div className="field">
@@ -266,7 +261,6 @@ function EventPartyEdit() {
                 value={eventData.address || ""}
                 onChange={handleChange}
                 placeholder="City"
-                required
               />
             </div>
             <div className="field">
@@ -279,7 +273,6 @@ function EventPartyEdit() {
                 value={eventData.referral || ""}
                 onChange={handleChange}
                 placeholder="Referral"
-                required
               />
             </div>
 
