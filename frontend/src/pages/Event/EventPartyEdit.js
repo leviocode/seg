@@ -3,17 +3,15 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EventPartyEdit() {
-  // Fetches latest Event count for serie generation (Optional)
-
   const { id } = useParams();
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // FIX UI/UX: State mencegah double submit
+  const [isSubmitting, setIsSubmitting] = useState(false); // State mencegah double submit
 
   const [eventData, setEventData] = useState({});
 
   const handleFile = (event) => {
-    // Perbaikan: Pengecekan file undefined jika user klik cancel di dialog file
+    // Pengecekan file undefined jika user klik cancel di dialog file
     if (event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
       // Access the filename from the selected file
@@ -115,7 +113,8 @@ function EventPartyEdit() {
     <>
       <div className="section">
         <div className="section headline">
-          <h4>Add Participant</h4>
+          {/* Perbaikan: Mengubah judul agar sesuai konteks halamannya */}
+          <h4>Edit Participant</h4>
           <button onClick={() => navigate(`/events`)} className="btn">
             See All Events
           </button>
@@ -142,7 +141,7 @@ function EventPartyEdit() {
                 className="input"
                 id="parentName"
                 name="parentName"
-                value={eventData.parentName || ""} // PERBAIKAN: Sebelumnya value={eventData.name} yang mana salah sambung
+                value={eventData.parentName || ""}
                 onChange={handleChange}
                 placeholder="Parent Name"
                 required
@@ -161,6 +160,23 @@ function EventPartyEdit() {
                 required
               />
             </div>
+
+            {/* Perbaikan: Menambahkan Product Option untuk menampung data kategori/lomba */}
+            <div className="field">
+              <label className="label">
+                Product Option / Kategori (Khusus Lomba/Beli)
+              </label>
+              <input
+                type="text"
+                className="input"
+                id="productOption"
+                name="productOption"
+                value={eventData.productOption || ""}
+                onChange={handleChange}
+                placeholder="Contoh: Lomba Mewarnai / Produk A"
+              />
+            </div>
+
             <div className="field">
               <label className="label">Occupation</label>
               <select
@@ -197,7 +213,7 @@ function EventPartyEdit() {
                 name="school"
                 value={eventData.school || ""}
                 onChange={handleChange}
-                placeholder="Company/Agency"
+                placeholder="School Name"
               />
             </div>
             <div className="field">
@@ -266,6 +282,21 @@ function EventPartyEdit() {
                 required
               />
             </div>
+
+            {/* Perbaikan: Menambahkan Payment Method */}
+            <div className="field">
+              <label className="label">Payment Method</label>
+              <input
+                type="text"
+                className="input"
+                id="method"
+                name="method"
+                value={eventData.method || ""}
+                onChange={handleChange}
+                placeholder="Payment Method"
+              />
+            </div>
+
             <div className="field">
               <label className="label">Attachment</label>
               <input
